@@ -1,6 +1,6 @@
 //// ConnectLineB2BConnector.getMasterData
 /// -----------------------------------------------
-/// LAST UPDATE -> 2023-09-26 18:07 - galex
+/// LAST UPDATE -> 2023-09-27 12:26 - galex
 /// -----------------------------------------------
 
 function testResponse(obj) {
@@ -476,10 +476,11 @@ function getItemsStock(obj) {
         response.data.push({
             "ITEMID": dsData.ITEMID,
             "CODE": dsData.SKU,
-            "PRICE": dsData.LIANIKI,
+            "PRICE": dsData.PRICE,
+            "LIANIKI": dsData.LIANIKI,
             // "DISCOUNT": dsData.EKPTOSILIANIKIS,
             "STOCK": dsData.STOCK,
-            "ANAMENOMENA": S1P.FItemOrdered(dsData.ITEMID, '', '')
+            // "ANAMENOMENA": S1P.FItemOrdered(dsData.ITEMID, '', '')
         });
         dsData.NEXT;
     }
