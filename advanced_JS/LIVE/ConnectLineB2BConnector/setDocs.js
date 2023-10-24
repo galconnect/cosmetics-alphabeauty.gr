@@ -1,6 +1,6 @@
 //// ConnectLineB2BConnector.setDocs
 /// ----------------------------------------------------
-/// LAST UPDATE -> 2023-09-19 18:31 - galex
+/// LAST UPDATE -> 2023-10-24 18:12 - galex
 /// ----------------------------------------------------
 lib.include("ConnectLineEshopCommon.common");
 lib.include("ConnectLineB2BConnector.setMasterData");
@@ -36,16 +36,6 @@ function setOrder(obj) {
     try {
         objFINDOC.DBINSERT;
         tblFINDOC.EDIT;
-
-        var siteId = '';
-        if (obj.series == 6023 || obj.series == 6021)
-            siteId = 'BeQ'
-        else if (obj.series == 7023 || obj.series == 7021)
-            siteId = 'Ekos'
-        else if (obj.series == 8023 || obj.series == 8021)
-            siteId = 'Zoro'
-
-
         // tblFINDOC.SERIES = getSeries(obj);
         if (!obj.series) tblFINDOC.SERIES = getSeries(obj);
         else tblFINDOC.SERIES = obj.series;
@@ -53,28 +43,23 @@ function setOrder(obj) {
         tblFINDOC.TRNDATE = obj.date;
         //tblFINDOC.VARCHAR01 = obj.varchar01;
 
-        if (obj.payment) tblFINDOC.PAYMENT = obj.payment;
-        if (obj.shipment) tblFINDOC.SHIPMENT = obj.shipment;
+        if (obj.payment) tblFINDOC.PAYMENT = getPaymentCodeFromShop(obj.payment);
+        if (obj.shipment) tblFINDOC.SHIPMENT = getShipmentCodeFromShop(obj.shipment);
         if (obj.remarks) tblFINDOC.REMARKS = obj.remarks;
-        if (obj.comments) tblFINDOC.COMMENTS = obj.comments;
-        if (obj.finstates) tblFINDOC.FINSTATES = obj.finstates; else tblFINDOC.FINSTATES = "1000"; // 1000	ΕΚΚΡΕΜΕΙ
+        // if (obj.comments) tblFINDOC.COMMENTS = obj.comments;
+        if (obj.finstates) tblFINDOC.FINSTATES = obj.finstates;
+        // if (obj.finstates) tblFINDOC.FINSTATES = obj.finstates; else tblFINDOC.FINSTATES = "1000"; // 1000	ΕΚΚΡΕΜΕΙ
 
         if (obj.webid) {
-            // tblFINDOC.FINCODE = obj.webid;
-            if (siteId != '')
-                webId = siteId + '-' + obj.webid;
-            else
-                webId = obj.webid;
-
-            tblFINDOC.CMPFINCODE = webId;
-            tblFINDOC.VARCHAR02 = webId;
+            // tblFINDOC.CMPFINCODE = obj.webid;
+            tblFINDOC.COMMENTS = obj.webid;
         }
 
         // if (obj.billinfo.name) tblFINDOC.cccclvarchar02 = obj.billinfo.name;
 
         var shipInfo = obj.shipinfo;
         tblMTRDOC.EDIT;
-        if (shipInfo.name) tblFINDOC.CCCParaliptisName = shipInfo.name;
+        // if (shipInfo.name) tblFINDOC.CCCParaliptisName = shipInfo.name;
         if (shipInfo.address) tblMTRDOC.SHIPPINGADDR = shipInfo.address;
         if (shipInfo.zip) tblMTRDOC.SHPZIP = shipInfo.zip;
         if (shipInfo.district) tblMTRDOC.SHPDISTRICT = shipInfo.district;
@@ -84,34 +69,14 @@ function setOrder(obj) {
         for (i in obj.items) {
             tblITELINES.EDIT;
             tblITELINES.APPEND;
-
-            // // responseCode = checkItem(obj.itelines[i]);
-            // responseCode = checkItemSku(obj.items[i].code);
-            // if (responseCode.success == false) return code.error;
-            // else if (responseCode.success == "true" || responseCode.success == true)
-            //     tblITELINES.SRCHCODE = responseCode.code;
-
             tblITELINES.SRCHCODE = obj.items[i].code;
 
             tblITELINES.QTY1 = obj.items[i].qty1;
-            tblITELINES.PRICE = obj.items[i].price;
+            tblITELINES.PRICE = seriralizePrices(obj.items[i].price);
             if (fieldHasValue(obj.items[i].total))
-                tblITELINES.LINEVAL = obj.items[i].total;
+                tblITELINES.LINEVAL = seriralizePrices(obj.items[i].total);
             else tblITELINES.LINEVAL = tblITELINES.QTY1 * tblITELINES.PRICE;
-            if (fieldHasValue(obj.items[i].availability))
-                tblITELINES.UFTBL01 = obj.items[i].availability;//VKA - 9/8/2023         
 
-
-            // if (fieldHasValue(obj.items[i].availability)) tblITELINES.COMMENTS2 = obj.items[i].availability;
-
-            // tblITELINES.QTY1 = seriralizePrices(obj.items[i].qty1);
-            // tblITELINES.PRICE = seriralizePrices(obj.items[i].price);
-            // if (fieldHasValue(obj.items[i].total))
-            //     tblITELINES.LINEVAL = seriralizePrices(obj.items[i].total);
-            // else tblITELINES.LINEVAL = tblITELINES.QTY1 * tblITELINES.PRICE;
-
-            // if (fieldHasValue(obj.items[i].comments))
-            //     tblITELINES.COMMENTS1 = obj.items[i].comments;
             tblITELINES.POST;
         }
 
@@ -214,8 +179,8 @@ function getShipInfo(obj) {
 }
 
 function getSeries(obj) {
-    if (customerNeedsInvoice(obj) == true) return 7021;
-    return 7023;
+    if (customerNeedsInvoice(obj) == true) return 7025;
+    return 7026;
 }
 
 function customerNeedsInvoice(obj) {
@@ -225,6 +190,19 @@ function customerNeedsInvoice(obj) {
 function getTrdCategory(obj) {
     if (customerNeedsInvoice(obj) == true) return 3000;
     return 3099;
+}
+
+function getPaymentCodeFromShop(payment) {
+    if (payment == 1) return 1001; // Αντικαταβολή
+    if (payment == 2) return 1000; // Πληρωμή στο Κατάστημα
+    if (payment == 3) return 1012; // PayPal
+    if (payment == 4) return 1005; // Πληρωμή με Πιστωτική - Χρεωστική κάρτα
+    if (payment == 5) return 1011; // Τραπεζική Κατάθεση
+}
+
+function getShipmentCodeFromShop(shipment) {
+    if (shipment == 1) return 1; // Αποστολή με Courier 	
+    if (shipment == 2) return 2; // Παραλαβή από το Κάταστημα
 }
 
 function processCustomer(obj) {
@@ -475,10 +453,12 @@ function setItem(obj) {
             itemVal.name = obj.items[i].name;
             itemVal.CCCCLESHOPNAME = obj.items[i].name;
             itemVal.code = obj.items[i].code;
-            itemVal.VAT = obj.items[i].vatcode;
-            itemVal.MTRUNIT1 = obj.items[i].mmcode;
-            if (obj.items[i].mmcodebuy) itemVal.MTRUNIT3 = obj.items[i].mmcodebuy; else itemVal.MTRUNIT3 = obj.items[i].mmcode;
-            if (obj.items[i].mmcodesell) itemVal.MTRUNIT4 = obj.items[i].mmcodesell; else itemVal.MTRUNIT4 = obj.items[i].mmcode;
+            if (itemMtrl.mtrl == 0) { // Αν δεν υπάρχει το είδος
+                itemVal.VAT = obj.items[i].vatcode;
+                itemVal.MTRUNIT1 = obj.items[i].mmcode;
+                if (obj.items[i].mmcodebuy) itemVal.MTRUNIT3 = obj.items[i].mmcodebuy; else itemVal.MTRUNIT3 = obj.items[i].mmcode;
+                if (obj.items[i].mmcodesell) itemVal.MTRUNIT4 = obj.items[i].mmcodesell; else itemVal.MTRUNIT4 = obj.items[i].mmcode;
+            }
             if (obj.items[i].mpn) itemVal.CODE2 = obj.items[i].mpn;
             if (obj.items[i].weight) itemVal.WEIGHT = obj.items[i].weight;
             if (obj.items[i].pricew) itemVal.PRICEW = obj.items[i].pricew;

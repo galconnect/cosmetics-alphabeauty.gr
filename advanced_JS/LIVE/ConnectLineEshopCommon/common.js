@@ -1,7 +1,8 @@
 //// ConnectLineEshopCommon.common
 /// -----------------------------------------------
-/// LAST UPDATE -> 2023-05-25 15:38 - galex
+/// LAST UPDATE -> 2023-10-24 18:13 - galex
 /// -----------------------------------------------
+
 function initializeResponse(hasDataList) {
     var response = {};
     response.success = true;
@@ -52,7 +53,7 @@ function responseError(message, hasDataList) {
 }
 
 function fieldHasValue(fieldValue) {
-    return (fieldValue != null && fieldValue != undefined && fieldValue != "" && fieldValue != "false");
+    return (fieldValue != null && fieldValue != undefined && fieldValue != "");
 }
 
 function convertKeysToLowerCase(obj) {
@@ -65,14 +66,6 @@ function convertKeysToLowerCase(obj) {
 function formatDateTime(dt) {
     return "'" + dt.replace(new RegExp(":", 'g'), "' + CHAR(58) + '") + "'";
 }
-
-function getPaymentCodeFromCustomArray(shipment_text_code) {
-    if (shipment_text_code.toLowerCase() == 'stripe')
-        return 1006;
-    else if (shipment_text_code.toLowerCase() == 'paypal')
-        return 1007;
-}
-
 function seriralizePrices(value) {
     returnValue = JSON.stringify(value).replace(".", ",");
     // returnValue = JSON.stringify(value);
