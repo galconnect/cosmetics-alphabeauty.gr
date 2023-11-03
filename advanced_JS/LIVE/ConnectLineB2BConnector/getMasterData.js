@@ -1,6 +1,6 @@
 //// ConnectLineB2BConnector.getMasterData
 /// -----------------------------------------------
-/// LAST UPDATE -> 2023-09-27 12:26 - galex
+/// LAST UPDATE -> 2023-11-03 16:01 - galex
 /// -----------------------------------------------
 
 function testResponse(obj) {
@@ -88,8 +88,8 @@ function getItems(obj) {
             "PRICE": dsData.PRICE,
             "LIANIKI": dsData.LIANIKI,
             // "DISCOUNT": dsData.EKPTOSILIANIKIS,
-            // "VATID": dsData.VATID,
-            // "VAT": dsData.VAT,
+            "VATID": dsData.VATID,
+            "VAT": dsData.VAT,
             // "UNIT": dsData.UNIT,
             "STOCK": dsData.STOCK,
             // "PARAKATATHIKI": dsData.PARAKATATHIKI,
