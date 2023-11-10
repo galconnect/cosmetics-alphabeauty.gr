@@ -1,6 +1,6 @@
 //// ConnectLineB2BConnector.setDocs
 /// ----------------------------------------------------
-/// LAST UPDATE -> 2023-10-24 18:12 - galex
+/// LAST UPDATE -> 2023-11-10 16:02 - galex
 /// ----------------------------------------------------
 lib.include("ConnectLineEshopCommon.common");
 lib.include("ConnectLineB2BConnector.setMasterData");
@@ -51,9 +51,11 @@ function setOrder(obj) {
         // if (obj.finstates) tblFINDOC.FINSTATES = obj.finstates; else tblFINDOC.FINSTATES = "1000"; // 1000	ΕΚΚΡΕΜΕΙ
 
         if (obj.webid) {
-            // tblFINDOC.CMPFINCODE = obj.webid;
-            tblFINDOC.COMMENTS = obj.webid;
+            tblFINDOC.CMPFINCODE = obj.webid;
+            // tblFINDOC.COMMENTS = obj.webid;
         }
+
+        if (obj.orderfrom) tblFINDOC.UFTBL01 = obj.orderfrom; else tblFINDOC.UFTBL01 = 1; // 1 = Παραγγελία από Ιστοσελίδα
 
         // if (obj.billinfo.name) tblFINDOC.cccclvarchar02 = obj.billinfo.name;
 
